@@ -23,15 +23,15 @@ exec zsh -l
 # automatically install Oh My Zsh, Powerlevel10k and related plugins.
 ```
 
-If you are not me, make sure to update `~/.config/git/config`:
+If you are not me, make sure to update `~/.config/git/config` or even better, add your desired changes to `~/.config/git/config`:
 ```sh
-git config --global user.name 'Your Name'
-git config --global user.email 'you@example.com'
+git config -f ~/.config/git/config.local user.name 'Your Name'
+git config -f ~/.config/git/config.local user.email 'you@example.com'
 # If you sign your commits:
-git config --global user.signingKey 'your-gpg-key'
+git config -f ~/.config/git/config.local user.signingKey 'your-gpg-key'
 # If you don't sign your commits:
-git config --global --unset user.signingKey
-git config --global --unset commit.gpgSign
+git config -f ~/.config/git/config.local user.signingKey ''
+git config -f ~/.config/git/config.local commit.gpgSign false
 ```
 
 ## TODO
