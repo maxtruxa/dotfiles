@@ -7,3 +7,4 @@ alias la='ls -lah' # default: 'ls -lAh'
 
 # Some additional aliases for less typing.
 alias v="nvim"
+alias vr="nvim -M" # readonly
