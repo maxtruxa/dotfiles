@@ -1,0 +1,68 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Max Truxa
+	email = dev@maxtruxa.com
+	signingKey = 736122B6AEA638AA
+
+[init]
+	defaultBranch = main
+
+[commit]
+	gpgSign = true
+
+[alias]
+	# Basic shortcuts.
+	a = add
+	b = branch
+	c = commit
+	co = checkout
+	d = diff
+	re = restore
+	s = status
+	sw = switch
+	st = stash
+	wt = worktree
+
+	# Better git log.
+	l = log --pretty=format:\"%C(yellow)%h%C(red)%d%C(reset) %s %C(blue)[%cn]\" --decorate --numstat
+	ll = log --pretty=format:\"%C(yellow)%h%C(red)%d%C(reset) %s %C(blue)[%cn]\" --decorate
+	graph = log --oneline --graph --decorate
+
+	# Get the name of the main branch (main or master).
+	main-branch = !"f() { \
+			if git show-ref --quiet refs/heads/main; then \
+				echo 'main'; \
+			elif git show-ref --quiet refs/heads/master; then \
+				echo 'master'; \
+			else \
+				return 1; \
+			fi \
+		}; f"
+
+	# Diff
+	diff-base = !git diff $(git merge-base --fork-point \"$(git main-branch)\")
+
+	# Sync a fork to upstream.
+	# If the merge with --ff-only fails you fucked up and commited changes
+	# directly to master (or upstream force pushed, but let's assume that
+	# never happens...).
+	sync = !"f() { \
+			local branch=\"$1\"; \
+			if [ -z \"$branch\" ]; then \
+				branch=\"$(git main-branch)\"; \
+			fi; \
+			if [ -z \"$branch\" ]; then \
+				echo 'No branch name specified and main branch could not be identified.'; \
+				return 1; \
+			fi; \
+			git fetch upstream && git checkout \"$branch\" && git merge \"upstream/$branch\" --ff-only; \
+		}; f"
+
+	# List branches which have been modified recently.
+	recent-branches = !git branch --sort=-committerdate | head -n5
+
+	# List all files which have conflicts (i.e. are "Unmerged").
+	conflicts = diff --name-only --diff-filter=U
+
+[include]
+	path = config.local

@@ -1,0 +1,31 @@
+# Nice shades of purple: 99, 135, 141
+
+# Apply nicer colors
+set -g status-style fg=black,bg=colour141
+set -g window-status-current-style fg=colour141,bg=black
+set -g message-style fg=white,bg=black,bright
+
+# Or for tmux < 3.0
+#set -g status-bg colour141
+#set -g status-fg black
+#set -g window-status-current-bg black
+#set -g window-status-current-fg colour141
+#set -g message-bg black
+#set -g message-fg white
+#set -g message-attr bright
+
+# Enable mouse support
+set -g mouse on
+
+# Set 256 color terminal type
+set -g default-terminal tmux-256color
+set -g default-command zsh
+
+# Use Vim-style shortcuts in copy mode
+set -g mode-keys vi
+
+# Remove the delay when pressing escape. This is annoying when using vim.
+set -sg escape-time 10
+
+# Import local configuration if provided.
+if-shell "[ -f ~/.config/tmux/config.local ]" 'source ~/.config/tmux/config.local'

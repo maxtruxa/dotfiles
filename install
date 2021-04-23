@@ -1,0 +1,69 @@
+#!/bin/sh
+
+scriptdir="$(dirname "$(readlink -f "$0")")"
+
+do_mkdir() {
+    local dirname="$1"
+    # dirname 'foo' -> '.'
+    if [ ! "$dirname" = '.' ]; then
+        mkdir -p "$HOME/$dirname"
+    fi
+}
+
+do_symlink() {
+    local filename="$1"
+    local linkname="$HOME/$filename"
+    local targetname="$scriptdir/$filename"
+    local reltarget="$(realpath --relative-to="$(dirname "$linkname")" "$targetname")"
+    #echo "Symlinking ~/$filename to $targetname ($reltarget)"
+    echo "Symlinking ~/$filename"
+    if [ -f "$linkname" ]; then
+        if ! diff "$targetname" "$linkname" >/dev/null; then
+            echo "\e[33mWarning: Overwriting ~/$filename!\e[m"
+            echo "Creating backup as ~/$filename.save"
+            mv "$linkname" "$linkname.save"
+        fi
+    fi
+    ln -sf "$reltarget" "$linkname"
+}
+
+link_file() {
+    local filename="$1"
+    local dirname="$(dirname "$filename")"
+    # Make sure the directory exists.
+    do_mkdir "$dirname"
+    # Symlink the file.
+    do_symlink "$filename"
+}
+
+link_files() {
+    local dirname="$1"
+    # Make sure the directory exists.
+    do_mkdir "$dirname"
+    # Symlink all files.
+    for f in "$dirname"/*; do
+        [ -f "$f" ] || continue
+        do_symlink "$f"
+    done
+}
+
+main() {
+    cd "$scriptdir"
+
+    link_files '.config/coreutils'
+    link_files '.config/git'
+    link_files '.config/htop'
+    link_files '.config/nvim'
+    link_files '.config/postgresql'
+    link_files '.config/tmux'
+    link_files '.config/wget'
+    link_files '.config/zsh'
+    link_files '.config/zsh/zlogin.d'
+    link_files '.config/zsh/zlogout.d'
+    link_files '.config/zsh/zprofile.d'
+    link_files '.config/zsh/zshenv.d'
+    link_files '.config/zsh/zshrc.d'
+    link_file '.zshenv'
+}
+
+main

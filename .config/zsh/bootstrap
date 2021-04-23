@@ -1,0 +1,115 @@
+#!/usr/bin/env zsh
+
+if [[ -z "$ZSH" || -z "$ZSH_CACHE_DIR" || -z "$ZSH_CUSTOM" ]]; then
+  >&2 echo '$ZSH, $ZSH_CACHE_DIR and $ZSH_CUSTOM must be set'
+  exit 1
+fi
+if [[ -z "$XDG_DATA_HOME" || -z "$XDG_STATE_HOME" ]]; then
+  >&2 echo '$XDG_DATA_HOME, $XDG_STATE_HOME must be set'
+  exit 1
+fi
+
+progress() {
+  echo -e "\e[31m** " "$@" "\e[m"
+}
+
+install_ohmyzsh() {
+  if [[ ! -d "$ZSH" ]]; then
+    progress "Installing Oh My Zsh..."
+    # Dumb workaround, because installer ignores $ZDOTDIR when looking for an
+    # existing ~/.zshrc
+    if [[ ! -f "$HOME/.zshrc" ]]; then
+      touch "$HOME/.zshrc"
+      local had_zshrc=true
+    fi
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+    if [[ ! -z "$had_zshrc" ]]; then
+      rm "$HOME/.zshrc"
+    fi
+  fi
+  # Make sure the cache directory exists, because Oh My Zsh does not create it
+  # by itself.
+  mkdir -p "$ZSH_CACHE_DIR"
+}
+
+install_via_git() {
+  local name="$1"
+  local target="$2"
+  local url="$3"
+  if [[ ! -d "$target" ]]; then
+    progress "Installing $name..."
+    git clone --depth=1 "$url" "$target"
+  fi
+}
+
+migrate_state_file() {
+  local src="$1"
+  local dst="$2"
+  # Make sure the target directory exists, no matter what happens next.
+  mkdir -p "${dst:h}"
+  if [[ ! -e "$src" ]]; then
+    # Nothing to migrate.
+    return 0
+  fi
+  if [[ -e "$dst" ]]; then
+    >&2 echo "  Warning: $dst already exists. $src was not migrated."
+    return 1
+  fi
+  echo "  Moving $src to $dst"
+  mv -n "$src" "$dst"
+}
+
+migrate_state_dir() {
+  local src="$1"
+  local dst="$2"
+  if [[ ! -e "$src" ]]; then
+    # Nothing to migrate. Make sure the target directory exists though.
+    mkdir -p "${dst}"
+    return 0
+  fi
+  if [[ -e "$dst" ]]; then
+    >&2 echo "  Warning: $dst already exists. $src was not migrated."
+    return 1
+  fi
+  echo "  Moving $src to $dst"
+  mkdir -p "${dst:h}"
+  mv -n "$src" "$dst"
+}
+
+install_ohmyzsh
+
+install_via_git \
+  "zsh-autosuggestions" \
+  "$ZSH_CUSTOM/plugins/zsh-autosuggestions" \
+  "https://github.com/zsh-users/zsh-autosuggestions.git"
+
+install_via_git \
+  "zsh-syntax-highlighting" \
+  "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" \
+  "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+
+install_via_git \
+  "powerlevel10k" \
+  "$ZSH_CUSTOM/themes/powerlevel10k"\
+  "https://github.com/romkatv/powerlevel10k.git"
+
+progress "Restarting zsh..."
+exec zsh -l
+
+progress "Migrating existing state files..."
+
+# Relocated through env vars in `.zshenv`.
+migrate_state_file "$HOME/.zsh_history" "$XDG_STATE_HOME/zsh/history"
+migrate_state_file "$HOME/.lesshst" "$XDG_STATE_HOME/less/history"
+migrate_state_file "$HOME/.node_repl_history" "$XDG_STATE_HOME/node/repl_history"
+migrate_state_file "$HOME/.psql_history" "$XDG_STATE_HOME/postgresql/psql_history"
+migrate_state_file "$HOME/.wget-hsts" "$XDG_STATE_HOME/wget/hsts"
+
+# Relocated through neovim configuration.
+migrate_state_dir "$XDG_DATA_HOME/nvim/shada/" "$XDG_STATE_HOME/nvim/shada/"
+migrate_state_dir "$XDG_DATA_HOME/nvim/swap/" "$XDG_STATE_HOME/nvim/swap/"
+
+# Relocated through env var in `.bashrc`
+migrate_state_file "$HOME/.bash_history" "$XDG_STATE_HOME/bash/history"
+
+# TODO: Setup neovim here instead of on first startup.
