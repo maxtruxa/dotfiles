@@ -2,7 +2,7 @@
 
 # Source all *.zsh files in `zshenv.d`, honoring local overrides.
 for file ("$ZDOTDIR/zshenv.d"/*.zsh(N)); do
-  local_override="$ZDOTDIR/zshenv.d/${file:t}.local.zsh"
+  local_override="$ZDOTDIR/zshenv.d/${file:t:r}.local.zsh"
   [[ -f "$local_override" ]] && file="$local_override"
   #echo "Sourcing $file..."
   source "$file"
