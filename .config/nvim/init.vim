@@ -42,6 +42,10 @@ Plug 'vim-airline/vim-airline'
 " https://github.com/vim-airline/vim-airline-themes
 Plug 'vim-airline/vim-airline-themes'
 
+" vim-bbye - delete buffers without closing your windows
+" https://github.com/moll/vim-bbye
+Plug 'moll/vim-bbye'
+
 " vim-windowswap - mark and swap windows with <leader>ww
 " https://github.com/wesQ3/vim-windowswap
 Plug 'wesQ3/vim-windowswap'
@@ -298,11 +302,17 @@ nnoremap <C-l> :bnext<CR>
 nnoremap <silent> <leader>bp :bprevious<CR>
 nnoremap <C-h> :bprevious<CR>
 
-" Close buffer.
-nnoremap <silent> <leader>bd :bdelete<CR>
+" Delete buffer.
+nnoremap <silent> <leader>bd :Bdelete<CR>
 
-" Kill buffer.
+" Delete buffer, discarding any changes.
 nnoremap <silent> <leader>bD :bdelete!<CR>
+
+" Wipe-out buffer.
+nnoremap <silent> <leader>bw :Bwipeout<CR>
+
+" Wipe-out buffer, discarding any changes.
+nnoremap <silent> <leader>bW :Bwipeout!<CR>
 
 " List buffers.
 nnoremap <silent> <leader>bl :ls<CR>
