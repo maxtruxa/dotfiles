@@ -50,6 +50,10 @@ Plug 'moll/vim-bbye'
 " https://github.com/wesQ3/vim-windowswap
 Plug 'wesQ3/vim-windowswap'
 
+" BufOnly.vim - delete all buffers except for the current one
+" https://github.com/vim-scripts/BufOnly.vim
+Plug 'vim-scripts/BufOnly.vim'
+
 " Load plugins.
 call plug#end()
 
