@@ -30,7 +30,7 @@ call plug#begin(stdpath('data') . '/plugged')
 
 " NERD Tree - file explorer
 " https://github.com/scrooloose/nerdtree
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'preservim/nerdtree', { 'on':  'NERDTreeToggle' }
 
 " nerdtree-git-plugin - show git status in NERD Tree
 " https://github.com/Xuyuanp/nerdtree-git-plugin
