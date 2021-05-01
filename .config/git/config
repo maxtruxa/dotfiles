@@ -10,6 +10,12 @@
 [commit]
 	gpgSign = true
 
+[merge]
+	ff = false
+
+[pull]
+	ff = only
+
 [credential]
 	helper = cache
 
