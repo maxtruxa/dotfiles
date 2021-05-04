@@ -48,7 +48,15 @@ ZSH_COMPDUMP="$XDG_CACHE_HOME/zcompdump-${HOST/.*/}-${ZSH_VERSION}"
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-plugins=(git gitfast sudo tmux zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(
+  git
+  gitfast
+  sudo
+  tmux
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  ssh-agent
+)
 
 # Load tmux config from custom $XDG_CONFIG_HOME path. Oh My Zsh's tmux plugin
 # adds an alias for "tmux" that uses this config file.
