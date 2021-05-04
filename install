@@ -54,6 +54,7 @@ main() {
     link_files '.config/git'
     link_files '.config/htop'
     link_files '.config/nvim'
+    link_files '.config/nvim/init.vim.d'
     link_files '.config/postgresql'
     link_files '.config/tmux'
     link_files '.config/wget'
