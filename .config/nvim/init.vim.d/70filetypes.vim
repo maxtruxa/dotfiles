@@ -10,6 +10,7 @@
 autocmd BufRead,BufNewFile *.ts setfiletype typescript
 autocmd BufRead,BufNewFile *.handlebars setfiletype html
 autocmd BufRead,BufNewFile *.hbs setfiletype html
+autocmd BufRead,BufNewFile ~/.config/git/config.local setfiletype gitconfig
 
 " Neovim's "vim.vim" ftplugin sets textwidth to 78.
 autocmd FileType vim setlocal textwidth=80
