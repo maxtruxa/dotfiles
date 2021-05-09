@@ -21,6 +21,7 @@ do_symlink() {
         if ! diff "$targetname" "$linkname" >/dev/null; then
             echo "\e[33mWarning: Overwriting ~/$filename!\e[m"
             echo "Creating backup as ~/$filename.save"
+            # TODO: Find usable name if save file already exists.
             mv "$linkname" "$linkname.save"
         fi
     fi
@@ -29,26 +30,57 @@ do_symlink() {
 
 link_file() {
     local filename="$1"
+    local mode="$2"
     local dirname="$(dirname "$filename")"
     # Make sure the directory exists.
     do_mkdir "$dirname"
     # Symlink the file.
     do_symlink "$filename"
+    if [ ! -z "$mode" ]; then
+      chmod "$mode" "$filename"
+    fi
 }
 
 link_files() {
     local dirname="$1"
+    local mode="$2"
     # Make sure the directory exists.
     do_mkdir "$dirname"
     # Symlink all files.
     for f in "$dirname"/*; do
         [ -f "$f" ] || continue
         do_symlink "$f"
+        if [ ! -z "$mode" ]; then
+          chmod "$mode" "$f"
+        fi
     done
 }
 
 main() {
     cd "$scriptdir"
+
+    local dist_id="$(lsb_release -si)"
+    local dist_name="$(lsb_release -sc)"
+
+    # Install only the bare minimum. Other stuff like ansible and terraform is
+    # only used if available.
+    local prereq_no_tmux='zsh git neovim jq'
+    local prereq="$prereq_no_tmux tmux"
+    if [ "$dist_id" = 'Debian' ] && [ "$dist_name" = 'bullseye' ]; then
+      echo "Installing prerequisites: $prereq"
+      sudo apt install -y $prereq # no quotes!
+    elif [ "$dist_id" = 'Debian' ] && [ "$dist_name" = 'buster' ]; then
+      echo "Installing prerequisites: $prereq"
+      sudo apt install -y $prereq_no_tmux # no quotes!
+      # tmux from buster repos is too old, install from backports.
+      sudo apt install -y -t "$(lsb_release -sc)-backports" tmux
+    else
+      >&2 echo '\e[33mWarning: Your distro is untested.\e[m'
+      read -p 'Continue anyway? [yes/no] ' reply
+      if [ "$reply" != 'yes' ]; then
+        return 1
+      fi
+    fi
 
     link_files '.config/coreutils'
     link_files '.config/git'
@@ -70,6 +102,7 @@ main() {
     link_files '.config/zsh/zshenv.d'
     link_files '.config/zsh/zshrc.d'
     link_file '.zshenv'
+    link_files '.local/bin' '+x'
 }
 
 main

@@ -3,14 +3,6 @@
 Tested on Debian 10 (Buster) and Debian 11 (Bullseye).
 
 ```sh
-# Install prerequisites.
-sudo apt install -y zsh git neovim
-# tmux from buster repos is too old, install from backports.
-if [ "$(lsb_release -si)" = "Debian" ] && [ "$(lsb_release -sc)" = "buster"]; then
-    sudo apt install -y -t "buster-backports" tmux
-else
-    sudo apt install -y tmux
-fi
 # Clone the dotfiles repo to your home directory.
 git clone https://github.com/maxtruxa/dotfiles.git ~/.dotfiles
 # Run the install script.
@@ -38,8 +30,7 @@ git config -f ~/.config/git/config.local commit.gpgSign false
 ## TODO
 
 - Merge `~/.config/zsh/bootstrap` into `install`.
-- Install prerequisites from the install script to further simplify installation
-  (i.e. to enable `wget -qO - https://... | sh`).
+- Enable `wget -qO - https://.../install | sh`.
 - Check tmux version to link either `~/.config/tmux/config` or `~/.tmux.conf` if
   the version is <3.1.
 - Implement "update check"?
