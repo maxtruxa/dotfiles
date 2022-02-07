@@ -3,9 +3,14 @@ if [[ -d "$HOME/.local/bin" ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 
+# Add Cargo binary path to $PATH.
+if [[ -d "$CARGO_HOME/bin" ]]; then
+  export PATH="$CARGO_HOME/bin:$PATH"
+fi
+
 # Add Go binary path to $PATH.
-if [[ -d "$HOME/.local/share/go/bin" ]]; then
-  export PATH="$HOME/.local/share/go/bin:$PATH"
+if [[ -d "$GOPATH/bin" ]]; then
+  export PATH="$GOPATH/bin:$PATH"
 fi
 
 # Remove duplicates from $PATH.

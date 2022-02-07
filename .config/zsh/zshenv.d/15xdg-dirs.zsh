@@ -21,6 +21,21 @@ if [[ -z "$GNUPGHOME" ]]; then
   export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 fi
 
+## Cargo
+# Really ~/.cargo should be split between $XDG_DATA_HOME and $XDG_CACHE_HOME,
+# but this not currently possible. Work is ongoing, slowwwly:
+# https://github.com/rust-lang/cargo/issues/1734
+# ~/.cargo -> $XDG_DATA_HOME/cargo
+if [[ -z "$CARGO_HOME" ]]; then
+  export CARGO_HOME="$XDG_DATA_HOME/cargo"
+fi
+
+## Rustup
+# ~/.rustup -> $XDG_DATA_HOME/rustup
+if [[ -z "$RUSTUP_HOME" ]]; then
+  export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+fi
+
 ## Golang
 # ~/go -> $XDG_DATA_HOME/go
 if [[ -z "$GOPATH" ]]; then
